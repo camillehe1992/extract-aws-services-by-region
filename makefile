@@ -1,6 +1,7 @@
 BASE := $(shell /bin/pwd)
 TF ?= terraform
 AWS ?= aws
+MAKE ?= make
 
 target:
 	$(info ${HELP_MESSAGE})
@@ -14,8 +15,13 @@ init:
 	$(info [*] Terraform Init)
 	@$(TF) init -reconfigure
 
+package:
+	$(info [*] Install Function Packages)
+	pipenv run pip freeze > ./extract-services-by-region/requirements.txt
+	pip install -r ./extract-services-by-region/requirements.txt --target ./extract-services-by-region/
 plan:
 	$(info [*] Terraform Plan )
+	@$(MAKE) package
 	@$(TF) plan -out tfplan
 
 apply:

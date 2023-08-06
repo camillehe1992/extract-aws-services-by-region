@@ -1,11 +1,11 @@
-import os
-import json
+import requests
 
 
 def lambda_handler(event, context):
-    json_region = os.environ["AWS_REGION"]
+    response = requests.get("https://api.regional-table.region-services.aws.a2z.com")
+    content = response.json()
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps({"Region ": json_region}),
+        "body": content,
     }
