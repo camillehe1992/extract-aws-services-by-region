@@ -9,6 +9,8 @@ xlsxwriter = "*"
 
 [dev-packages]
 pylint = "*"
+boto3 = "*"
+botocore = "*"
 
 [requires]
 python_version = "3.9"

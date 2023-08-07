@@ -73,11 +73,21 @@ resource "aws_lambda_function" "extractor" {
   s3_key    = aws_s3_object.lambda_extractor.key
 
   runtime = "python3.9"
+  timeout = 60
   handler = "main.lambda_handler"
 
   source_code_hash = data.archive_file.lambda_extractor.output_base64sha256
 
   role = aws_iam_role.lambda_exec.arn
+
+  environment {
+    variables = {
+      ENV                      = var.environment
+      APPLICATION              = var.application_name
+      AWS_SERVICES_API_URL     = var.aws_services_api_url
+      XLSX_FILE_S3_BUKCET_NAME = aws_s3_bucket.lambda_bucket.id
+    }
+  }
 }
 
 resource "aws_cloudwatch_log_group" "extractor" {
@@ -103,7 +113,12 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_policy" {
+resource "aws_iam_role_policy_attachment" "lambda_policy_lambda" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws-cn:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_policy_s3_ro" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws-cn:iam::aws:policy/AmazonS3FullAccess"
 }
