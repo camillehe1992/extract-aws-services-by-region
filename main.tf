@@ -108,6 +108,16 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
+
+resource "aws_lambda_permission" "permission" {
+
+  function_name = aws_lambda_function.extractor.function_name
+  action        = "lambda:InvokeFunction"
+  statement_id  = "AllowCloudWatchEventsInvoke"
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.rule.arn
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_policy_lambda" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws-cn:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
