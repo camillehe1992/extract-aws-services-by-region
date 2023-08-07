@@ -13,11 +13,15 @@ make plan
 make apply
 ```
 
-Once Terraform creates the function, invoke it using the AWS CLI.
+Once Terraform creates the function, invoke it using the AWS CLI. The output will be saved into *response.json*
 
 ```bash
-AWS_PROFILE=756143471679_UserFull aws lambda invoke --function-name=$(terraform output -raw function_name) response.json
-
+AWS_PROFILE=210692783429_UserFull aws lambda invoke \
+    --function-name=$(terraform output -raw function_name) response.json
+```
+Then, download the xlsx file with AWS available services by specific regions information from the URL using below command.
+```bash
+cat response.json | jq .body
 ```
 
 ## Reference
