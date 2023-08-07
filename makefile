@@ -17,9 +17,11 @@ init:
 
 package:
 	$(info [*] Install Function Packages)
-
-	pipenv run pip freeze > ./extract-services-by-region/requirements.txt
-	pip install -r ./extract-services-by-region/requirements.txt --target ./extract-services-by-region/
+	rm -rf ./build/
+	mkdir build/
+	cp -r extract-services-by-region ./build/
+	pipenv run pip freeze > ./build/extract-services-by-region/requirements.txt
+	pip install -r ./build/extract-services-by-region/requirements.txt --target ./build/extract-services-by-region/
 plan:
 	$(info [*] Terraform Plan )
 	@$(MAKE) package
