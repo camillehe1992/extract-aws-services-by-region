@@ -9,9 +9,6 @@ urllib3 = "==1.25.4"
 xlsxwriter = "==3.1.2"
 
 [dev-packages]
-pylint = "*"
-boto3 = "*"
-botocore = "*"
 
 [requires]
 python_version = "3.9"

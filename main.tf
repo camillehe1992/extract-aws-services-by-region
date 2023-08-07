@@ -117,3 +117,60 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_s3_ro" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws-cn:iam::aws:policy/AmazonS3FullAccess"
 }
+
+resource "aws_iam_role_policy_attachment" "lambda_policy_sns" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws-cn:iam::aws:policy/AmazonSNSFullAccess"
+}
+
+# Send email notification with presigned url via SNS topic
+resource "aws_sns_topic" "notification" {
+  name            = "${var.application_name}-notification"
+  delivery_policy = <<EOF
+{
+  "http": {
+    "defaultHealthyRetryPolicy": {
+      "minDelayTarget": 20,
+      "maxDelayTarget": 20,
+      "numRetries": 3,
+      "numMaxDelayRetries": 0,
+      "numNoDelayRetries": 0,
+      "numMinDelayRetries": 0,
+      "backoffFunction": "linear"
+    },
+    "disableSubscriptionOverrides": false,
+    "defaultThrottlePolicy": {
+      "maxReceivesPerSecond": 1
+    }
+  }
+}
+EOF
+}
+
+resource "aws_lambda_function_event_invoke_config" "trigger_topic" {
+  function_name = aws_lambda_function.extractor.function_name
+
+  destination_config {
+    on_success {
+      destination = aws_sns_topic.notification.arn
+    }
+  }
+}
+
+resource "aws_sns_topic_subscription" "trigger_topic_emails" {
+  topic_arn = aws_sns_topic.notification.arn
+  protocol  = "email"
+  endpoint  = "camille.he@outlook.com"
+}
+
+resource "aws_cloudwatch_event_rule" "rule" {
+  name                = "${var.application_name}-trigger-lambda"
+  schedule_expression = "cron(0/1 * * * ? *)"
+}
+
+resource "aws_cloudwatch_event_target" "lambda_target" {
+  rule      = aws_cloudwatch_event_rule.rule.name
+  target_id = "SendToLambda"
+  arn       = aws_lambda_function.extractor.arn
+  input     = "{}"
+}
