@@ -11,6 +11,16 @@ create-stack:
 	$(info [*] Create Infrastructure using AWS CLI)
 	@$(AWS) cloudformation create-stack --stack-name terraform-infrastructure --template-body file://cloudformation/infrastructure.yaml
 
+install:
+	$(info [*] Installing pipenv)
+	@pip3 install pipenv --upgrade
+	@$(PIPENV) shell
+
+dev:
+	$(info [*] Installing pipenv project dependencies)
+	@$(PIPENV) install --dev
+	@$(PIPENV) graph
+
 init:
 	$(info [*] Terraform Init)
 	@$(TF) init -reconfigure
