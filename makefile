@@ -29,7 +29,7 @@ init:
 
 package:
 	$(info [*] Install Function Packages)
-	rm -rf ./build/
+	rm -rf build/
 	mkdir build/
 	cp -r extract-services-by-region ./build/
 	pip install -r ./build/extract-services-by-region/requirements.txt --target ./build/extract-services-by-region/
