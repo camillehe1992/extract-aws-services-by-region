@@ -163,7 +163,3 @@ cython_debug/
 .vscode/
 tfplan
 response.json
-# We don't need to checkin the packages code
-# requirements.txt is genereated by running make package
-/extract-services-by-region/requirements.txt
-/extract-services-by-region/**/*
