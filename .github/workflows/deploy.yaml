@@ -57,14 +57,17 @@ jobs:
       - name: Install Dependencies
         run: |
           export exitcode=0
-          pip install -r ./extract-services-by-region/requirements.txt --target ./extract-services-by-region
+          rm -rf build/
+          mkdir build/
+          cp -r extract-services-by-region ./build/
+          pip install -r ./build/extract-services-by-region/requirements.txt --target ./build/extract-services-by-region/
       
       # Save lambda source code zip file to artifacts
       - name: Upload Lambda Package to Artifactory
         uses: actions/upload-artifact@v3
         with:
-          name: lambda_package
-          path: extract-services-by-region
+          name: extract-services-by-region
+          path: ./build/extract-services-by-region
       
       # Generates an execution plan for Terraform
       # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
@@ -155,8 +158,8 @@ jobs:
       - name: Download Lambda Source Code
         uses: actions/download-artifact@v3
         with:
-          name: lambda_package
-          path: /build
+          name: extract-services-by-region
+          path: ./build
 
       # Download saved plan from artifacts
       - name: Download Terraform Plan
