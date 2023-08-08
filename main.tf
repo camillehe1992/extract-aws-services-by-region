@@ -23,6 +23,7 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
+  # comment out profile in order to use aws credential in github actions
   # profile = var.aws_profile
   default_tags {
     tags = {
