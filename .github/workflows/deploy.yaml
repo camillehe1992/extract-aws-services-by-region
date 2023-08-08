@@ -159,7 +159,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: extract-services-by-region
-          path: ./build/extract-services-by-region
 
       # Download saved plan from artifacts
       - name: Download Terraform Plan
