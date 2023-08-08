@@ -35,3 +35,17 @@ variable "target_regions" {
   default     = "cn-north-1,cn-northwest-1,eu-central-1"
   description = "The target AWS regions that we want to check its AWS services availability"
 }
+
+# https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html
+variable "cron_expression" {
+  type        = string
+  default     = "cron(0 8 1 * ? *)"
+  description = "The scheduled cron expression, Run at 8:00 am (UTC) every 1st day of the month by default"
+}
+
+
+variable "notification_email_address" {
+  type        = string
+  default     = "camille.he@outlook.com"
+  description = "The email address that subscribes the SNS topic to receive notification"
+}

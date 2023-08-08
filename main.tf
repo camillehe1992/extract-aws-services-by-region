@@ -110,7 +110,6 @@ resource "aws_iam_role" "lambda_exec" {
 
 
 resource "aws_lambda_permission" "permission" {
-
   function_name = aws_lambda_function.extractor.function_name
   action        = "lambda:InvokeFunction"
   statement_id  = "AllowCloudWatchEventsInvoke"
@@ -170,12 +169,12 @@ resource "aws_lambda_function_event_invoke_config" "trigger_topic" {
 resource "aws_sns_topic_subscription" "trigger_topic_emails" {
   topic_arn = aws_sns_topic.notification.arn
   protocol  = "email"
-  endpoint  = "camille.he@outlook.com"
+  endpoint  = var.notification_email_address
 }
 
 resource "aws_cloudwatch_event_rule" "rule" {
   name                = "${var.application_name}-trigger-lambda"
-  schedule_expression = "cron(0/1 * * * ? *)"
+  schedule_expression = var.cron_expression
 }
 
 resource "aws_cloudwatch_event_target" "lambda_target" {

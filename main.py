@@ -146,28 +146,6 @@ def create_presigned_url(
     return response
 
 
-# def send_email_notification(presigned_url: str):
-#     sns_client = boto3.client("sns")
-#     response = sns_client.publish(
-#         TopicArn="string",
-#         TargetArn="string",
-#         PhoneNumber="string",
-#         Message="string",
-#         Subject="string",
-#         MessageStructure="string",
-#         MessageAttributes={
-#             "string": {
-#                 "DataType": "string",
-#                 "StringValue": "string",
-#                 "BinaryValue": b"bytes",
-#             }
-#         },
-#         MessageDeduplicationId="string",
-#         MessageGroupId="string",
-#     )
-#     pass
-
-
 def lambda_handler(event, context):
     content = get_services_details()
     extracted_content = extract_regions(content)
