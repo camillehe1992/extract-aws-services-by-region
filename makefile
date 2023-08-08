@@ -3,6 +3,8 @@ TF ?= terraform
 AWS ?= aws
 MAKE ?= make
 
+export AWS_PROFILE=210692783429_UserFull
+
 target:
 	$(info ${HELP_MESSAGE})
 	@exit 0
@@ -30,8 +32,6 @@ package:
 	rm -rf ./build/
 	mkdir build/
 	cp -r extract-services-by-region ./build/
-	pipenv run pip freeze > ./build/extract-services-by-region/requirements.txt
-	pipenv uninstall --all-dev --target ./build/extract-services-by-region/
 	pip install -r ./build/extract-services-by-region/requirements.txt --target ./build/extract-services-by-region/
 plan:
 	$(info [*] Terraform Plan )

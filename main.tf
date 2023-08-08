@@ -1,9 +1,8 @@
 terraform {
   backend "s3" {
-    bucket  = "tf-state-210692783429-cn-north-1"
-    key     = "extract-services-by-region.json"
-    region  = "cn-north-1"
-    profile = "210692783429_UserFull"
+    bucket = "tf-state-210692783429-cn-north-1"
+    key    = "extract-services-by-region/state.json"
+    region = "cn-north-1"
   }
 
   required_providers {

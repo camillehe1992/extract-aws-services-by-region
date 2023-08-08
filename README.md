@@ -38,6 +38,7 @@ Notes:
 ```
 - All AWS resources are defined in `main.tf`.
 - Always remember to add denpendencies in `requirements.txt` if you are sure that is necessary for Lambda function.
+- After deployment, you will receive an email from `AWS Notification - Subscription Confirmation`. Comfirm the subscription so you can receive email notification later.
 
 ## Local Development
 In order to debug and test your Lambda code locally, firstly you should create a vitual environment for it. In the example, we use _python_ as the language, so I chose *pipenv* to setup a vitual environment and install python dependencies in it. Run below command.
@@ -61,19 +62,41 @@ make plan
 make apply
 ```
 
-Once Terraform creates the function, invoke it using the AWS CLI. The output will be saved into *response.json*
+Once Terraform creates the function, invoke it using the AWS CLI.
+
+Option 1
 
 ```bash
-AWS_PROFILE=210692783429_UserFull aws lambda invoke \
-    --function-name=$(terraform output -raw function_name) response.json
+# Invoke lambda function synchronously (and wait for the response) using below command. It won't trigger the downstream SNS topic as the Lambda destination configuratio is for Asynchronous invocation.
+
+export AWS_PROFILE=210692783429_UserFull
+
+aws lambda invoke \
+    --function-name=$(terraform output -raw function_name) \
+    response.json
+
+# Then, download the xlsx file by click on the presigned URL that print out using below command.
 ```
-Then, download the xlsx file with AWS available services by specific regions information from the URL using below command.
 ```bash
 cat response.json | jq .body
+```
+Option 2
+
+If you want to test the entire workflow, run below command to sent asynchronous invocation. An email notification will send to your 
+
+```bash
+export AWS_PROFILE=210692783429_UserFull
+
+aws lambda invoke \
+    --function-name $(terraform output -raw function_name) \
+    --invocation-type Event \
+    --payload "{}" \
+    response.json
 ```
 
 # Deploy via GitHub Actions
 
+I create a `deploy.yaml` GitHub Actions workflow to deploy the whole infrastructure to AWS automatically. Send the pipeline result in `Actions` tab from GitHub repo.
 
 ## Reference
 https://developer.hashicorp.com/terraform/tutorials/aws/lambda-api-gateway#lambda-api-gateway
