@@ -1,4 +1,4 @@
-name: Terraform Plan/Apply
+name: Terraform Deploy
 
 on:
   push:
@@ -17,8 +17,8 @@ env:
   AWS_REGION: "${{ vars.AWS_REGION }}"
 
 jobs:
-  terraform-apply:
-    name: Terraform Plan
+  terraform-deploy:
+    name: Terraform Deploy
     runs-on: ubuntu-latest
     environment: development
     env:
@@ -61,13 +61,6 @@ jobs:
           mkdir build/
           cp -r extract-services-by-region build/
           pip install -r build/extract-services-by-region/requirements.txt --target build/extract-services-by-region/
-
-      # Save Lambda package to artifacts
-      - name: Publish Lambda Package
-        uses: actions/upload-artifact@v3
-        with:
-          name: extract-services-by-region
-          path: build
 
       # Generates an execution plan for Terraform
       # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
@@ -142,5 +135,5 @@ jobs:
 
       # Terraform Apply
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && steps.tf-plan.outputs.tfplanExitCode == 2
+        if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve tfplan
