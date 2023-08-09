@@ -53,8 +53,9 @@ data "archive_file" "lambda_extractor" {
 resource "aws_s3_object" "lambda_extractor" {
   bucket = aws_s3_bucket.lambda_bucket.id
 
-  key    = "${var.application_name}.zip"
-  source = data.archive_file.lambda_extractor.output_path
+  key           = "${var.application_name}.zip"
+  source        = data.archive_file.lambda_extractor.output_path
+  force_destroy = true
 
   etag = filemd5(data.archive_file.lambda_extractor.output_path)
 }
