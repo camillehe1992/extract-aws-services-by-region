@@ -61,7 +61,14 @@ jobs:
           mkdir build/
           cp -r extract-services-by-region ./build/
           pip install -r ./build/extract-services-by-region/requirements.txt --target ./build/extract-services-by-region/
-      
+
+      # Save Lambda package to artifacts
+      - name: Publish Lambda Package
+        uses: actions/upload-artifact@v3
+        with:
+          name: extract-services-by-region
+          path: /build/extract-services-by-region
+
       # Generates an execution plan for Terraform
       # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
       - name: Terraform Plan
@@ -147,19 +154,18 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Install Dependencies
-        run: |
-          export exitcode=0
-          rm -rf build/
-          mkdir build/
-          cp -r extract-services-by-region ./build/
-          pip install -r ./build/extract-services-by-region/requirements.txt --target ./build/extract-services-by-region/
-      
+      # Download saved lambda package from artifacts
+      - name: Download Lambda Package
+        uses: actions/download-artifact@v3
+        with:
+          name: extract-services-by-region
+
       # Download saved plan from artifacts
       - name: Download Terraform Plan
         uses: actions/download-artifact@v3
         with:
           name: tfplan
+          path: /build
 
       # Terraform Apply
       - name: Terraform Apply
