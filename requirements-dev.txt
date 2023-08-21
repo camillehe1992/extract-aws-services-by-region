@@ -1,0 +1,5 @@
+-r ./extract-services-by-region/requirements.txt
+
+pylint==2.17.5
+boto3==1.26.90
+botocore==1.29.90

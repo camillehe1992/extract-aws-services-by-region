@@ -1,6 +1,7 @@
 BASE := $(shell /bin/pwd)
 TF ?= terraform
 AWS ?= aws
+PIP ?= pip
 MAKE ?= make
 
 export AWS_PROFILE=210692783429_UserFull
@@ -11,17 +12,11 @@ target:
 
 create-stack:
 	$(info [*] Create Infrastructure using AWS CLI)
-	@$(AWS) cloudformation create-stack --stack-name terraform-infrastructure --template-body file://cloudformation/infrastructure.yaml
+	@$(AWS) cloudformation create-stack --stack-name terraform-infrastructure --template-body file://cloudformation/tf_infrastructure.yaml
 
 install:
-	$(info [*] Installing pipenv)
-	@pip3 install pipenv --upgrade
-	@$(PIPENV) shell
-
-dev:
 	$(info [*] Installing pipenv project dependencies)
-	@$(PIPENV) install --dev
-	@$(PIPENV) graph
+	@$(PIP) install -r requirements-dev.txt
 
 init:
 	$(info [*] Terraform Init)

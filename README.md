@@ -41,13 +41,16 @@ Notes:
 - After deployment, you will receive an email from `AWS Notification - Subscription Confirmation`. Comfirm the subscription so you can receive email notification later.
 
 ## Local Development
-In order to debug and test your Lambda code locally, firstly you should create a vitual environment for it. In the example, we use _python_ as the language, so I chose *pipenv* to setup a vitual environment and install python dependencies in it. Run below command.
+In order to debug and test your Lambda code locally, firstly you should create a vitual environment for it. In the example, we use _python_ as the language, so I chose *conda* to setup a vitual environment and install python dependencies in it. Run below command.
 ```bash
-# Install pipenv on local machine
+# Create a virtual environment
+conda create -n extract-aws-services-by-region python=3.9
+# Activate the environment
+conda activate extract-aws-services-by-region
+# Install dependencies in environment
+pip install -r requirements-dev.txt
+# Or run below command
 make install
-
-# Create a vitual environment and install dependencies in Pipfile
-make dev
 ```
 ## Deployment
 
@@ -82,7 +85,7 @@ cat response.json | jq .body
 ```
 Option 2
 
-If you want to test the entire workflow, run below command to sent asynchronous invocation. An email notification will send to your 
+If you want to test the entire workflow, run below command to sent asynchronous invocation. An email notification will send to the subscribers.
 
 ```bash
 export AWS_PROFILE=210692783429_UserFull
