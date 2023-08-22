@@ -8,7 +8,7 @@ variable "aws_region" {
 
 variable "aws_profile" {
   type        = string
-  default     = "210692783429_UserFull"
+  default     = "app_deployment_dev"
   description = "AWS profile which is used for the deployment"
 }
 
@@ -18,6 +18,7 @@ variable "application_name" {
   description = "The application name"
 }
 
+# Lambda Function Environment Variables
 variable "environment" {
   type        = string
   default     = "dev"
@@ -42,7 +43,6 @@ variable "cron_expression" {
   default     = "cron(0 8 1 * ? *)"
   description = "The scheduled cron expression, Run at 8:00 am (UTC) every 1st day of the month by default"
 }
-
 
 variable "notification_email_address" {
   type        = string

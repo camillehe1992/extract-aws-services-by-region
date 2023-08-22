@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "tf-state-210692783429-cn-north-1"
+    bucket = "hyc-tf-state-756143471679-cn-north-1"
     key    = "extract-services-by-region/state.json"
     region = "cn-north-1"
   }
@@ -39,7 +39,8 @@ resource "random_pet" "lambda_bucket_name" {
 }
 
 resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = random_pet.lambda_bucket_name.id
+  bucket        = random_pet.lambda_bucket_name.id
+  force_destroy = true
 }
 
 # Create and upload Lambda function archive
@@ -52,29 +53,22 @@ data "archive_file" "lambda_extractor" {
 
 resource "aws_s3_object" "lambda_extractor" {
   bucket = aws_s3_bucket.lambda_bucket.id
-
-  key           = "${var.application_name}.zip"
-  source        = data.archive_file.lambda_extractor.output_path
-  force_destroy = true
-
-  etag = filemd5(data.archive_file.lambda_extractor.output_path)
+  key    = "lambda-function-zip-files/${var.application_name}.zip"
+  source = data.archive_file.lambda_extractor.output_path
+  etag   = filemd5(data.archive_file.lambda_extractor.output_path)
 }
 
 # Create the Lambda function
 
 resource "aws_lambda_function" "extractor" {
-  function_name = var.application_name
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda_extractor.key
-
-  runtime = "python3.9"
-  timeout = 60
-  handler = "main.lambda_handler"
-
+  function_name    = var.application_name
+  s3_bucket        = aws_s3_bucket.lambda_bucket.id
+  s3_key           = aws_s3_object.lambda_extractor.key
+  runtime          = "python3.9"
+  timeout          = 60
+  handler          = "main.lambda_handler"
   source_code_hash = data.archive_file.lambda_extractor.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
+  role             = aws_iam_role.lambda_exec.arn
 
   environment {
     variables = {
@@ -87,14 +81,12 @@ resource "aws_lambda_function" "extractor" {
 }
 
 resource "aws_cloudwatch_log_group" "extractor" {
-  name = "/aws/lambda/${aws_lambda_function.extractor.function_name}"
-
+  name              = "/aws/lambda/${aws_lambda_function.extractor.function_name}"
   retention_in_days = 30
 }
 
 resource "aws_iam_role" "lambda_exec" {
   name = "${var.application_name}-sls-lambda"
-
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -120,17 +112,17 @@ resource "aws_lambda_permission" "permission" {
 
 resource "aws_iam_role_policy_attachment" "lambda_policy_lambda" {
   role       = aws_iam_role.lambda_exec.name
-  policy_arn = "arn:aws-cn:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  policy_arn = "arn:${local.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy_s3_ro" {
   role       = aws_iam_role.lambda_exec.name
-  policy_arn = "arn:aws-cn:iam::aws:policy/AmazonS3FullAccess"
+  policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonS3FullAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy_sns" {
   role       = aws_iam_role.lambda_exec.name
-  policy_arn = "arn:aws-cn:iam::aws:policy/AmazonSNSFullAccess"
+  policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonSNSFullAccess"
 }
 
 # Send email notification with presigned url via SNS topic

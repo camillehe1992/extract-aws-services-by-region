@@ -4,7 +4,7 @@ AWS ?= aws
 PIP ?= pip
 MAKE ?= make
 
-export AWS_PROFILE=210692783429_UserFull
+export AWS_PROFILE=app_deployment_dev
 
 target:
 	$(info ${HELP_MESSAGE})
@@ -27,7 +27,7 @@ package:
 	rm -rf build/
 	mkdir build/
 	cp -r extract-services-by-region ./build/
-	pip install -r ./build/extract-services-by-region/requirements.txt --target ./build/extract-services-by-region/
+	@$(PIP) install -r ./build/extract-services-by-region/requirements.txt --target ./build/extract-services-by-region/
 plan:
 	$(info [*] Terraform Plan )
 	@$(MAKE) package

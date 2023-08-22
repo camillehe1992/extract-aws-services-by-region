@@ -15,25 +15,25 @@ Below is the workflow diagram. The core functionality is defined in Lambda funct
 ## Code Structure
 ```bash
 .
-├── Pipfile                         # pipenv file to save dependencies
-├── Pipfile.lock
+├── requirements-dev.txt            # Python dependencies including dev
 ├── README.md
 ├── cloudformation                  # The AWS resources' CloudFormation to save terrafrom state file and lock file
 │   └── tf_infrastructure.yaml
 ├── extract-services-by-region      # Lambda function source code and requirements.txt
 │   ├── main.py
-│   └── requirements.txt
-├── main.tf                         # main.tf, outputs.tf, variables.tf are all Terrform related definitions
+│   └── requirements.txt            # Lambda function required dependencies
+├── locals.tf                       # locals.tf, main.tf, outputs.tf, variables.tf are all Terrform related definitions 
+├── main.tf
 ├── makefile                        # A makefile to make command life easily
 ├── outputs.tf
 └── variables.tf
 ```
 Notes:
-- tf_infrastructure.yaml: Terrform use S3 bucket and Dynamodb table to save state and lock files. That is why I create a CloudFormation template here. You can create these resources manually from AWS console as well. Then update `bucket` and `key` field in below block in *main.tf*.
+- tf_infrastructure.yaml: CloudFormation template for Terraform backend S3 bucket and lock DynamoDB table. In the demo, I choose S3 as Terrform backend, and Dynamodb table to save state and lock files. The backend S3 Bucket must exist before initialing Terraform resources. You can create these resources manually from AWS console or use the CloudFormation template. Then update `bucket` field in below block in *main.tf*.
 ```yaml
   backend "s3" {
-    bucket  = "tf-state-210692783429-cn-north-1"
-    key     = "extract-services-by-region.json"
+    bucket  = "hyc-tf-state-756143471679-cn-north-1"
+    key     = "extract-services-by-region/state.json"
   }
 ```
 - All AWS resources are defined in `main.tf`.
@@ -72,7 +72,7 @@ Option 1
 ```bash
 # Invoke lambda function synchronously (and wait for the response) using below command. It won't trigger the downstream SNS topic as the Lambda destination configuratio is for Asynchronous invocation.
 
-export AWS_PROFILE=210692783429_UserFull
+export AWS_PROFILE=app_deployment_dev
 
 aws lambda invoke \
     --function-name=$(terraform output -raw function_name) \
@@ -88,7 +88,7 @@ Option 2
 If you want to test the entire workflow, run below command to sent asynchronous invocation. An email notification will send to the subscribers.
 
 ```bash
-export AWS_PROFILE=210692783429_UserFull
+export AWS_PROFILE=app_deployment_dev
 
 aws lambda invoke \
     --function-name $(terraform output -raw function_name) \
@@ -96,6 +96,7 @@ aws lambda invoke \
     --payload "{}" \
     response.json
 ```
+You will get a 202 status code, and an email from `AWS Notification` after a few seconds.
 
 # Deploy via GitHub Actions
 
