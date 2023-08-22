@@ -1,8 +1,9 @@
 terraform {
   backend "s3" {
-    bucket = "hyc-tf-state-756143471679-cn-north-1"
-    key    = "extract-services-by-region/state.json"
-    region = "cn-north-1"
+    bucket  = "hyc-tf-state-756143471679-cn-north-1"
+    key     = "extract-services-by-region/state.json"
+    region  = "cn-north-1"
+    profile = "app_deployment_dev"
   }
 
   required_version = "1.3.4"
