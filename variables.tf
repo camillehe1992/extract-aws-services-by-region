@@ -8,7 +8,7 @@ variable "aws_region" {
 
 variable "aws_profile" {
   type        = string
-  default     = "app_deployment_dev"
+  default     = "service.tsp-cicd-runner"
   description = "AWS profile which is used for the deployment"
 }
 

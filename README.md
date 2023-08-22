@@ -88,8 +88,6 @@ Option 2
 If you want to test the entire workflow, run below command to sent asynchronous invocation. An email notification will send to the subscribers.
 
 ```bash
-export AWS_PROFILE=app_deployment_dev
-
 aws lambda invoke \
     --function-name $(terraform output -raw function_name) \
     --invocation-type Event \
