@@ -3,7 +3,7 @@ terraform {
     bucket  = "hyc-tf-state-756143471679-cn-north-1"
     key     = "extract-services-by-region/state.json"
     region  = "cn-north-1"
-    profile = "app_deployment_dev"
+    profile = "service.tsp-cicd-runner"
   }
 
   required_version = "1.3.4"
@@ -24,9 +24,8 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
-  # comment out profile in order to use aws credential in github actions
-  # profile = var.aws_profile
+  region  = var.aws_region
+  profile = var.aws_profile
   default_tags {
     tags = {
       application = "${var.application_name}"

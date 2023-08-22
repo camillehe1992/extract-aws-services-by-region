@@ -4,7 +4,7 @@ AWS ?= aws
 PIP ?= pip
 MAKE ?= make
 
-export AWS_PROFILE=app_deployment_dev
+export AWS_PROFILE=service.tsp-cicd-runner
 
 target:
 	$(info ${HELP_MESSAGE})
