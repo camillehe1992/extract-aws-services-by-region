@@ -72,7 +72,7 @@ Option 1
 ```bash
 # Invoke lambda function synchronously (and wait for the response) using below command. It won't trigger the downstream SNS topic as the Lambda destination configuratio is for Asynchronous invocation.
 
-export AWS_PROFILE=app_deployment_dev
+export AWS_PROFILE=service.tsp-cicd-runner
 
 aws lambda invoke \
     --function-name=$(terraform output -raw function_name) \
