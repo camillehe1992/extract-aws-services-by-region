@@ -5,8 +5,6 @@ terraform {
     region  = "cn-north-1"
     profile = "service.tsp-cicd-runner"
   }
-
-  required_version = "1.3.4"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
